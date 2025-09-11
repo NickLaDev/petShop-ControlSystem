@@ -2,13 +2,28 @@
 #include <stdlib.h>
 #include "FILA.h"
 #include <locale.h>
+#include <string.h>
 #include <time.h>
 
 
-Pet adicionarPet(Fila* filaEmergencia, Fila* filaNormal){
+void limparTela() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear"); 
+#endif
+}
+
+void limpar_buffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) { }
+}
+
+void adicionarPet(Fila* filaEmergencia, Fila* filaNormal){
     Pet novoPet;
     srand(time(NULL));
     int min = 100, max = 999,confirmar=0;
+    limparTela();
 
     while(confirmar==0){
         printf("--- Você está no menu de Adiconar um novo PET ---\n");
@@ -49,6 +64,7 @@ Pet adicionarPet(Fila* filaEmergencia, Fila* filaNormal){
 
 void atenderPet(Fila* filaEmergencia, Fila* filaNormal, Fila* filaAtendidos){
     Pet petAtendido;
+    limparTela();
     printf("--- Você está no menu de Atender um PET ---\n");
 
     if(!VaziaFila(filaEmergencia)){
@@ -59,6 +75,7 @@ void atenderPet(Fila* filaEmergencia, Fila* filaNormal, Fila* filaAtendidos){
         InsereFila(filaAtendidos, petAtendido);
         printf("\n--- PET atendido com sucesso! ---\n");
         printf("\n--- Aperte qualquer tecla para continuar ---");
+        limpar_buffer();
         getchar();
     }else if(!VaziaFila(filaNormal)){
         printf("\n --- Atendendo o próximo PET da fila Normal ---\n");
@@ -68,11 +85,34 @@ void atenderPet(Fila* filaEmergencia, Fila* filaNormal, Fila* filaAtendidos){
         InsereFila(filaAtendidos, petAtendido);
         printf("\n--- PET atendido com sucesso! ---\n");
         printf("\n--- Aperte qualquer tecla para continuar ---");
+        limpar_buffer();
         getchar();
     }else{
         printf("\n--- Não há PETs para serem Atendidos! ---\n");
         printf("\n --- Aperte qualquer tecla para continuar ---\n");
+        limpar_buffer();
         getchar();
+    }
+}
+
+void buscarPet(Fila* filaEmergencia, Fila* filaNormal, Fila* filaAtendidos){
+    int tipo_Busca, encontrado=0;
+    limparTela();
+    printf("--- Você está no menu de Buscar um PET ---\n");
+    printf("\nDigite o tipo de busca que deseja realizar (0-Por ID/1-Por Nome): ");
+    scanf("%d", &tipo_Busca);
+    if(tipo_Busca){
+        char nome_Busca[51];
+        printf("\nDigite o nome do PET que deseja buscar: ");
+        limpar_buffer();
+        fgets(nome_Busca, 51, stdin);
+
+        Nos* q;
+        printf("\n--- Buscando PETs com o nome: %s ---\n", nome_Busca);
+        //Começar a percorrer as filas para achar o nome
+        q = filaEmergencia->ini;
+        while()
+
     }
 }
 
@@ -87,7 +127,7 @@ int main(){
     Fila* filaAtendidos = CriaFila();
 
     do{
-
+        limparTela();
         printf("\n          --- Menu de Opções ---\n");
         printf("\n--- (1)Adicionar PET a fila ---");
         printf("\n--- (2)Atender PET ---");
@@ -110,6 +150,7 @@ int main(){
                 break;
             case 3:
                 //Buscar PET
+                buscarPet(filaEmergencia, filaNormal, filaAtendidos);
                 break;
             case 4:
                 //Relatório da FILA
