@@ -1,11 +1,137 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "FILA.h"
+#include <locale.h>
+#include <time.h>
+
+
+Pet adicionarPet(Fila* filaEmergencia, Fila* filaNormal){
+    Pet novoPet;
+    srand(time(NULL));
+    int min = 100, max = 999,confirmar=0;
+
+    while(confirmar==0){
+        printf("--- Você está no menu de Adiconar um novo PET ---\n");
+        printf("\nDigite o nome do PET: ");
+        scanf("%s", novoPet.nome);
+        printf("\nDigite a espécie do PET: ");
+        scanf("%s", novoPet.especie);
+        printf("\nDigite a idade do PET: ");
+        scanf("%d", &novoPet.idade);
+        printf("\nDigite a data de nascismento do PET (dd mm aaaa):");
+        scanf("%d %d %d", &novoPet.dataNascimento.dia, &novoPet.dataNascimento.mes, &novoPet.dataNascimento.ano);
+        do{
+            printf("\nDigite a prioridade do PET (0 para Emergência, 1 para Normal): ");
+            scanf("%d", &novoPet.prioridade);
+            if(novoPet.prioridade != 0 && novoPet.prioridade != 1){
+                printf("\nPrioridade inválida! Tente novamente. \n");
+        }
+        }while(novoPet.prioridade != 0 && novoPet.prioridade != 1);
+        int numero_aleatorio = (rand() % (max - min + 1)) + min;
+        novoPet.id = numero_aleatorio;
+        printf("\nO ID gerado para o PET é: %d\n", novoPet.id);
+
+        printf("\n--- Você adicionou o PET com os seguintes dados: ---\n");
+        imprimeInfopet(novoPet);
+        printf("\n--- Você confirma as informações do PET ou deseja refazer?(0-Refazer/1-Confirmar): ");
+        scanf("%d", &confirmar);
+    }
+
+    novoPet.prioridade == 0 ? InsereFila(filaEmergencia,novoPet) : InsereFila(filaNormal,novoPet);
+
+    printf("\n--- PET adicionado com sucesso! ---\n");
+    printf("\n--- Aperte qualquer tecla para continuar ---");
+
+    getchar();
+
+    return novoPet;
+}
+
+void atenderPet(Fila* filaEmergencia, Fila* filaNormal, Fila* filaAtendidos){
+    Pet petAtendido;
+    printf("--- Você está no menu de Atender um PET ---\n");
+
+    if(!VaziaFila(filaEmergencia)){
+        printf("\n --- Atendendo o próximo PET da Emergência ---\n");
+        petAtendido = RetiraFila(filaEmergencia);
+        printf("\n--- Dados do PET sendo atendido: ---\n");
+        imprimeInfopet(petAtendido);
+        InsereFila(filaAtendidos, petAtendido);
+        printf("\n--- PET atendido com sucesso! ---\n");
+        printf("\n--- Aperte qualquer tecla para continuar ---");
+        getchar();
+    }else if(!VaziaFila(filaNormal)){
+        printf("\n --- Atendendo o próximo PET da fila Normal ---\n");
+        petAtendido = RetiraFila(filaNormal);
+        printf("\n--- Dados do PET sendo atendido: ---\n");
+        imprimeInfopet(petAtendido);
+        InsereFila(filaAtendidos, petAtendido);
+        printf("\n--- PET atendido com sucesso! ---\n");
+        printf("\n--- Aperte qualquer tecla para continuar ---");
+        getchar();
+    }else{
+        printf("\n--- Não há PETs para serem Atendidos! ---\n");
+        printf("\n --- Aperte qualquer tecla para continuar ---\n");
+        getchar();
+    }
+}
 
 int main(){
 
+    setlocale(LC_ALL, "Portuguese");
+
+    int opr=0;
+
+    Fila* filaEmergencia = CriaFila();
+    Fila* filaNormal = CriaFila();
+    Fila* filaAtendidos = CriaFila();
+
+    do{
+
+        printf("\n          --- Menu de Opções ---\n");
+        printf("\n--- (1)Adicionar PET a fila ---");
+        printf("\n--- (2)Atender PET ---");
+        printf("\n--- (3)Buscar PET ---");
+        printf("\n--- (4)Relatório da FILA ---");
+        printf("\n--- (5)Próximo PET a ser atendido ---");
+        printf("\n--- (6)Relatório já Atendidos ---");
+        printf("\n--- (7)Finalizar Sistema ---\n");
+
+        scanf("%d",&opr);
+
+        switch(opr){
+            case 1:
+                //Adiciona PET a fila
+                adicionarPet(filaEmergencia, filaNormal);
+                break;
+            case 2:
+                //Atender PET
+                atenderPet(filaEmergencia, filaNormal, filaAtendidos);
+                break;
+            case 3:
+                //Buscar PET
+                break;
+            case 4:
+                //Relatório da FILA
+                break;
+            case 5:
+                //Próximo PET a ser atendido
+                break;
+            case 6:
+                //Relatório já Atendidos
+                break;
+            case 7:
+                //Finalizar Sistema
+                break;
+            default:
+                //Opção Inválida
+
+        }
 
 
 
-    
+    }while(opr!=7);
+
+
+
 }

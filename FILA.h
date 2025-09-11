@@ -141,4 +141,14 @@ Fila* liberaFila (Fila* f)
     return NULL;
 }
 
+void imprimeInfopet(Pet p){
+    
+    printf("ID: %d\n", p.id);
+    printf("Nome: %s\n", p.nome);
+    printf("Espécie: %s\n", p.especie);
+    printf("Idade: %d\n", p.idade);
+    printf("Data de Nascimento: %02d/%02d%04d\n",p.dataNascimento.dia, p.dataNascimento.mes, p.dataNascimento.ano);
+    printf("Prioridade: %s\n", p.prioridade == 0 ? "Emergência" : "Normal");
+}
+
 #endif // FILA_H_INCLUDED
