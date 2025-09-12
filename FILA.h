@@ -115,7 +115,7 @@ void imprimeRelatorioFila (Fila* f, const char* tipoFila)
     for (q = f->ini; q != NULL; q = q->prox)
     {
         // Acessamos cada campo da struct 'info'
-        printf("%-4d | %-20s | %-20s | %-5d | %02d/%02d/%-8d | %s\n",
+        printf("%-4d | %-20s | %-20s | %-5d | %02d/%02d/%-4d | %s\n",
                q->info.id,
                q->info.nome,
                q->info.especie,
@@ -142,7 +142,7 @@ Fila* liberaFila (Fila* f)
 }
 
 void imprimeInfopet(Pet p){
-    
+
     printf("ID: %d\n", p.id);
     printf("Nome: %s\n", p.nome);
     printf("Espécie: %s\n", p.especie);

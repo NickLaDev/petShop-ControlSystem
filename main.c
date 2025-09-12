@@ -10,7 +10,7 @@ void limparTela() {
 #ifdef _WIN32
     system("cls");
 #else
-    system("clear"); 
+    system("clear");
 #endif
 }
 
@@ -28,7 +28,9 @@ void adicionarPet(Fila* filaEmergencia, Fila* filaNormal){
     while(confirmar==0){
         printf("--- Você está no menu de Adiconar um novo PET ---\n");
         printf("\nDigite o nome do PET: ");
-        scanf("%s", novoPet.nome);
+        limpar_buffer();
+        fgets(novoPet.nome, 50, stdin);
+        //scanf("%s", novoPet.nome);
         printf("\nDigite a espécie do PET: ");
         scanf("%s", novoPet.especie);
         printf("\nDigite a idade do PET: ");
@@ -105,14 +107,98 @@ void buscarPet(Fila* filaEmergencia, Fila* filaNormal, Fila* filaAtendidos){
         char nome_Busca[51];
         printf("\nDigite o nome do PET que deseja buscar: ");
         limpar_buffer();
-        fgets(nome_Busca, 51, stdin);
+        fgets(nome_Busca, 50, stdin);
 
         Nos* q;
         printf("\n--- Buscando PETs com o nome: %s ---\n", nome_Busca);
         //Começar a percorrer as filas para achar o nome
         q = filaEmergencia->ini;
-        while()
+        while(q != NULL){
+            if(strcmp(q->info.nome, nome_Busca) == 0){
+                printf("\n--- PET encontrado na fila de Emergência! ---\n");
+                imprimeInfopet(q->info);
+                encontrado =1;
+                printf("\n--- Aperte qualquer tecla para continuar! ---\n");
+                limpar_buffer();
+                getchar();
+            }
+            q = q->prox;
+        }
+            q = filaNormal->ini;
+            while(q!= NULL){
+                if(strcmp(q->info.nome, nome_Busca) == 0){
+                    printf("\n--- PET encontrado na fila Normal! ---\n");
+                    imprimeInfopet(q->info);
+                    encontrado =1;
+                    printf("\n--- Aperte qualquer tecla para continuar! ---\n");
+                    limpar_buffer();
+                    getchar();
+                }
+                q = q->prox;
+            }
+            q = filaAtendidos->ini;
+            while(q!= NULL){
+                if(strcmp(q->info.nome, nome_Busca) == 0){
+                    printf("\n--- PET encontrado na fila de Atendidos! ---\n");
+                    imprimeInfopet(q->info);
+                    encontrado =1;
+                    printf("\n--- Aperte qualquer tecla para continuar! ---\n");
+                    limpar_buffer();
+                    getchar();
+                }
+                q = q->prox;
+            }
+    }else if(!tipo_Busca){
+        int id_Procurado;
+        printf("\nDigite o ID do PET que deseja buscar: ");
+        scanf("%d",&id_Procurado);
+        Nos* q;
+        printf("\n--- Buscando PETs com o ID: %d ---\n", id_Procurado);
+        //Começar a percorrer as filas para achar o nome
+        q = filaEmergencia->ini;
+        while(q != NULL){
+            if(id_Procurado == q->info.id){
+                printf("\n--- PET encontrado na fila de Emergência! ---\n");
+                imprimeInfopet(q->info);
+                encontrado =1;
+                printf("\n--- Aperte qualquer tecla para continuar! ---\n");
+                limpar_buffer();
+                getchar();
+            }
+            q = q->prox;
+        }
+            q = filaNormal->ini;
+            while(q!= NULL){
+                if(id_Procurado == q->info.id){
+                    printf("\n--- PET encontrado na fila Normal! ---\n");
+                    imprimeInfopet(q->info);
+                    encontrado =1;
+                    printf("\n--- Aperte qualquer tecla para continuar! ---\n");
+                    limpar_buffer();
+                    getchar();
+                }
+                q = q->prox;
+            }
+            q = filaAtendidos->ini;
+            while(q!= NULL){
+                if(id_Procurado == q->info.id){
+                    printf("\n--- PET encontrado na fila de Atendidos! ---\n");
+                    imprimeInfopet(q->info);
+                    encontrado =1;
+                    printf("\n--- Aperte qualquer tecla para continuar! ---\n");
+                    limpar_buffer();
+                    getchar();
+                }
+                q = q->prox;
+            }
 
+    }else{
+        printf("Erro!");
+        limpar_buffer();
+        getchar();
+    }
+    if(!encontrado){
+        printf("\n--- O PET não foi identificado em nenhuma das FILAS! ---\n");
     }
 }
 
