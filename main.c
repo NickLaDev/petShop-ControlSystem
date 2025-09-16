@@ -199,7 +199,55 @@ void buscarPet(Fila* filaEmergencia, Fila* filaNormal, Fila* filaAtendidos){
     }
     if(!encontrado){
         printf("\n--- O PET não foi identificado em nenhuma das FILAS! ---\n");
+         limpar_buffer();
+        getchar();
     }
+}
+
+void imprimirFila(Fila* filaDesejada){
+
+    Nos* q;
+    q = filaDesejada->ini;
+
+
+    while(q!=NULL){
+    imprimeInfopet(q->info);
+    q=q->prox;
+    }
+    limpar_buffer();
+    getchar();
+
+}
+
+void imprimirRelatorio(Fila* filaEmergencia, Fila* filaNormal){
+    limparTela();
+    printf("\n--- Você está no menu do Relatório das FILAS! ---\n");
+    printf("\n--- Deseja imprimir o relatório de qual fila? ---\n");
+    printf("\n--- (0)Fila de Emergência ---");
+    printf("\n--- (1)Fila Normal ---");
+    printf("\n--- (2)Ambas as filas ---\n");
+    int opcao;
+    scanf("%d",&opcao);
+    switch(opcao){
+        case 0:
+            limparTela();
+            printf("\n--- Relatório da Fila de Emergência ---\n");
+            imprimirFila(filaEmergencia);
+            break;
+        case 1:
+            limparTela();
+            printf("\n--- Relatório da Fila de Normal ---\n");
+            imprimirFila(filaNormal);
+            break;
+        case 2:
+            limparTela();
+            printf("\n--- Relatório da Fila de Emergência ---\n");
+            imprimirFila(filaEmergencia);
+            printf("\n\n--- Relatório da Fila de Normal ---\n");
+            imprimirFila(filaNormal);
+            break;
+    }
+
 }
 
 int main(){
@@ -240,6 +288,7 @@ int main(){
                 break;
             case 4:
                 //Relatório da FILA
+                imprimirRelatorio(filaEmergencia, filaNormal);
                 break;
             case 5:
                 //Próximo PET a ser atendido
