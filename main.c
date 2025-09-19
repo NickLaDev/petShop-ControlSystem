@@ -19,7 +19,86 @@ void limpar_buffer() {
     while ((c = getchar()) != '\n' && c != EOF) { }
 }
 
-void adicionarPet(Fila* filaEmergencia, Fila* filaNormal){
+void salvar_dados(Fila* filaEmergencia, Fila* filaNormal, Fila* filaAtendidos) {
+    FILE *arquivo = fopen("dados_clinica.txt", "w"); // "w" para escrever (write)
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo para salvar!\n");
+        return;
+    }
+
+    Nos* q;
+
+    // Salva a fila de Emergência
+    // Usamos um 'E' para identificar que o pet pertence a esta fila
+    q = filaEmergencia->ini;
+    while (q != NULL) {
+        fprintf(arquivo, "E;%d;%s;%s;%d;%d;%d;%d\n",
+                q->info.id, q->info.nome, q->info.especie, q->info.idade,
+                q->info.dataNascimento.dia, q->info.dataNascimento.mes, q->info.dataNascimento.ano);
+        q = q->prox;
+    }
+
+    // Salva a fila Normal (identificador 'N')
+    q = filaNormal->ini;
+    while (q != NULL) {
+        fprintf(arquivo, "N;%d;%s;%s;%d;%d;%d;%d\n",
+                q->info.id, q->info.nome, q->info.especie, q->info.idade,
+                q->info.dataNascimento.dia, q->info.dataNascimento.mes, q->info.dataNascimento.ano);
+        q = q->prox;
+    }
+
+    // Salva a fila de Atendidos (identificador 'A')
+    q = filaAtendidos->ini;
+    while (q != NULL) {
+        // Para os atendidos, a prioridade original já está no 'q->info.prioridade'
+        fprintf(arquivo, "A;%d;%s;%s;%d;%d;%d;%d;%d\n",
+                q->info.id, q->info.nome, q->info.especie, q->info.idade,
+                q->info.dataNascimento.dia, q->info.dataNascimento.mes, q->info.dataNascimento.ano, q->info.prioridade);
+        q = q->prox;
+    }
+
+    fclose(arquivo);
+    printf("Dados salvos com sucesso!\n");
+}
+
+
+void carregar_dados(Fila* filaEmergencia, Fila* filaNormal, Fila* filaAtendidos) {
+    FILE *arquivo = fopen("dados_clinica.txt", "r"); // "r" para ler (read)
+    if (arquivo == NULL) {
+        printf("Arquivo de dados não encontrado. Iniciando um novo sistema.\n");
+        return;
+    }
+
+    Pet tempPet;
+    char tipoFila;
+
+    // Lê os pets das filas de espera
+    while (fscanf(arquivo, "%c;", &tipoFila) != EOF) {
+        if (tipoFila == 'A') { // Se for da fila de atendidos, o formato é diferente
+             fscanf(arquivo, "%d;%[^;];%[^;];%d;%d;%d;%d;%d\n",
+                   &tempPet.id, tempPet.nome, tempPet.especie, &tempPet.idade,
+                   &tempPet.dataNascimento.dia, &tempPet.dataNascimento.mes, &tempPet.dataNascimento.ano, &tempPet.prioridade);
+            InsereFila(filaAtendidos, tempPet);
+        } else {
+             fscanf(arquivo, "%d;%[^;];%[^;];%d;%d;%d;%d\n",
+                   &tempPet.id, tempPet.nome, tempPet.especie, &tempPet.idade,
+                   &tempPet.dataNascimento.dia, &tempPet.dataNascimento.mes, &tempPet.dataNascimento.ano);
+
+            if (tipoFila == 'E') {
+                tempPet.prioridade = 0; // Emergência
+                InsereFila(filaEmergencia, tempPet);
+            } else if (tipoFila == 'N') {
+                tempPet.prioridade = 1; // Normal
+                InsereFila(filaNormal, tempPet);
+            }
+        }
+    }
+
+    fclose(arquivo);
+    printf("Dados carregados com sucesso!\n");
+}
+
+void adicionarPet(Fila* filaEmergencia, Fila* filaNormal, Fila* filaAtendidos){
     Pet novoPet;
     srand(time(NULL));
     int min = 100, max = 999,confirmar=0;
@@ -46,6 +125,34 @@ void adicionarPet(Fila* filaEmergencia, Fila* filaNormal){
         }
         }while(novoPet.prioridade != 0 && novoPet.prioridade != 1);
         int numero_aleatorio = (rand() % (max - min + 1)) + min;
+        Nos* q;
+        q = filaEmergencia->ini;
+        while(q!=NULL){
+            if(numero_aleatorio == q->info.id){
+                while(numero_aleatorio == q->info.id){
+                numero_aleatorio = (rand() % (max - min + 1)) + min;
+                }
+            q = q->prox;
+            }
+        }
+        q = filaNormal->ini;
+        while(q!=NULL){
+            if(numero_aleatorio == q->info.id){
+                while(numero_aleatorio == q->info.id){
+                numero_aleatorio = (rand() % (max - min + 1)) + min;
+                }
+            q = q->prox;
+            }
+        }
+        q = filaAtendidos->ini;
+        while(q!=NULL){
+            if(numero_aleatorio == q->info.id){
+                while(numero_aleatorio == q->info.id){
+                numero_aleatorio = (rand() % (max - min + 1)) + min;
+                }
+            q = q->prox;
+            }
+        }
         novoPet.id = numero_aleatorio;
         printf("\nO ID gerado para o PET é: %d\n", novoPet.id);
 
@@ -255,7 +362,7 @@ void imprimirRelatorio(Fila* filaEmergencia, Fila* filaNormal){
 }
 
 void prox_Pet(Fila* filaEmergencia, Fila* filaNormal){
-    
+
     limparTela();
     printf("--- Você está no menu do Próximo PET a ser atendido! ---\n");
 
@@ -298,6 +405,12 @@ int main(){
     Fila* filaNormal = CriaFila();
     Fila* filaAtendidos = CriaFila();
 
+     // Carrega os dados do arquivo ao iniciar o programa
+    carregar_dados(filaEmergencia, filaNormal, filaAtendidos);
+    printf("Pressione qualquer tecla para continuar...\n");
+    getchar();
+
+
     do{
         limparTela();
         printf("\n          --- Menu de Opções ---\n");
@@ -314,7 +427,7 @@ int main(){
         switch(opr){
             case 1:
                 //Adiciona PET a fila
-                adicionarPet(filaEmergencia, filaNormal);
+                adicionarPet(filaEmergencia, filaNormal, filaAtendidos);
                 break;
             case 2:
                 //Atender PET
@@ -348,6 +461,15 @@ int main(){
 
     }while(opr!=7);
 
+    salvar_dados(filaEmergencia, filaNormal, filaAtendidos);
 
+    // Libera a memória (opcional, mas boa prática)
+    liberaFila(filaEmergencia);
+    liberaFila(filaNormal);
+    liberaFila(filaAtendidos);
+
+    printf("Sistema finalizado.\n");
+
+    return 0;
 
 }
