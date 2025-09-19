@@ -29,7 +29,8 @@ void adicionarPet(Fila* filaEmergencia, Fila* filaNormal){
         printf("--- Você está no menu de Adiconar um novo PET ---\n");
         printf("\nDigite o nome do PET: ");
         limpar_buffer();
-        fgets(novoPet.nome, 50, stdin);
+        fgets(novoPet.nome, 51, stdin);
+        novoPet.nome[strcspn(novoPet.nome, "\n")] = 0;
         //scanf("%s", novoPet.nome);
         printf("\nDigite a espécie do PET: ");
         scanf("%s", novoPet.especie);
@@ -107,7 +108,8 @@ void buscarPet(Fila* filaEmergencia, Fila* filaNormal, Fila* filaAtendidos){
         char nome_Busca[51];
         printf("\nDigite o nome do PET que deseja buscar: ");
         limpar_buffer();
-        fgets(nome_Busca, 50, stdin);
+        fgets(nome_Busca, 51, stdin);
+        nome_Busca[strcspn(nome_Busca, "\n")] = 0;
 
         Nos* q;
         printf("\n--- Buscando PETs com o nome: %s ---\n", nome_Busca);
@@ -213,6 +215,7 @@ void imprimirFila(Fila* filaDesejada){
     while(q!=NULL){
     imprimeInfopet(q->info);
     q=q->prox;
+    printf("\n");
     }
     limpar_buffer();
     getchar();
@@ -233,6 +236,7 @@ void imprimirRelatorio(Fila* filaEmergencia, Fila* filaNormal){
             limparTela();
             printf("\n--- Relatório da Fila de Emergência ---\n");
             imprimirFila(filaEmergencia);
+            printf("\n\n\n\n");
             break;
         case 1:
             limparTela();
@@ -248,6 +252,40 @@ void imprimirRelatorio(Fila* filaEmergencia, Fila* filaNormal){
             break;
     }
 
+}
+
+void prox_Pet(Fila* filaEmergencia, Fila* filaNormal){
+    
+    limparTela();
+    printf("--- Você está no menu do Próximo PET a ser atendido! ---\n");
+
+    if(!VaziaFila(filaEmergencia)){
+        printf("\n --- O próximo PET a ser atendido é da Emergêmncia ---\n");
+        imprimeInfopet(filaEmergencia->ini->info);
+        printf("\n --- Aperte qualquer tecla para continuar ---\n");
+        limpar_buffer();
+        getchar();
+    }else if(!VaziaFila(filaNormal)){
+        printf("\n --- O próximo PET a ser atendido é da fila Normal ---\n");
+        imprimeInfopet(filaNormal->ini->info);
+        printf("\n --- Aperte qualquer tecla para continuar ---\n");
+        limpar_buffer();
+        getchar();
+    }else{
+        printf("\n--- Não há PETs para serem Atendidos! ---n");
+        printf("\n--- Aperte qualquer tecla para continuar ---\n");
+        limpar_buffer();
+        getchar();
+    }
+}
+
+void imprimir_Atendidos(Fila* filaAtendidos){
+    limparTela();
+    printf("\n--- Relatório da Fila de Atendidos ---\n");
+    imprimirFila(filaAtendidos);
+    printf("\n--- Pressione qualquer tecla para continuar ---\n");
+    limpar_buffer();
+    getchar();
 }
 
 int main(){
@@ -292,8 +330,10 @@ int main(){
                 break;
             case 5:
                 //Próximo PET a ser atendido
+                prox_Pet(filaEmergencia, filaNormal);
                 break;
             case 6:
+                imprimir_Atendidos(filaAtendidos);
                 //Relatório já Atendidos
                 break;
             case 7:
